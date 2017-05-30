@@ -76,7 +76,7 @@ Public Function ImportToTable(ByVal targetTableName As String, ByVal oledbConnec
             Case ADODB.DataTypeEnum.adGUID:
                 newfld.Type = DataTypeEnum.dbGUID
             Case ADODB.DataTypeEnum.adInteger:
-                newfld.Type = DataTypeEnum.dbInteger
+                newfld.Type = DataTypeEnum.dbLong
             Case ADODB.DataTypeEnum.adSingle:
                 newfld.Type = DataTypeEnum.dbSingle
             Case ADODB.DataTypeEnum.adSmallInt:
