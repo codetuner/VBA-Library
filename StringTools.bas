@@ -2,7 +2,7 @@ Attribute VB_Name = "StringTools"
 '========================================================================'
 '== STRINGTOOLS                                                        =='
 '==                                                                    =='
-'== © Copyright 1999-2001 Rudi Breedenraedt - rudi@breedenraedt.be     =='
+'== Â© Copyright 1999-2001 Rudi Breedenraedt - rudi@breedenraedt.be     =='
 '========================================================================'
 Option Explicit
 
@@ -77,7 +77,7 @@ End Function
 '  another string                                                        '
 '  E.g: MsgBox ReplaceFirst("Hi <Name> !","<Name>","John")               '
 '       will display 'Hi John !'                                         '
-'See also: ReplaceAll                                                    '
+'See also: ReplaceAll, ReplaceMulti                                      '
 '------------------------------------------------------------------------'
 Public Function ReplaceFirst(ByVal Target As String, ByVal FindStr As String, ByVal ByStr As String, Optional ByVal start As Long = 1) As String
     Dim i As Integer
@@ -95,7 +95,7 @@ End Function
 '  string                                                                '
 '  E.g: MsgBox ReplaceAll("Hi <Name> !","<Name>","John")                 '
 '       will display 'Hi John !'                                         '
-'See also: ReplaceFirst                                                  '
+'See also: ReplaceFirst, ReplaceMulti                                    '
 '------------------------------------------------------------------------'
 Public Function ReplaceAll(ByVal Target As String, ByVal FindStr As String, ByVal ByStr As String, Optional ByVal start As Long = 1) As String
     Dim i As Integer
@@ -107,6 +107,26 @@ Public Function ReplaceAll(ByVal Target As String, ByVal FindStr As String, ByVa
         i = InStr(start, Target, FindStr)
     Wend
     ReplaceAll = Target
+
+End Function
+
+ '------------------------------------------------------------------------'
+ 'Function ReplaceMulti : performs multiple string replaces in a one call '
+ ' E.g: str = ReplaceMulti(vbTextCompare, "abcd", "a", "1", "c", "3")     '
+ '      will assign "1b3d" to str.
+ 'See also: ReplaceFirst, ReplaceAll
+ '------------------------------------------------------------------------'
+ Public Function ReplaceMulti(ByVal compare As VbCompareMethod, ByVal str As String, ParamArray replacements() As Variant) As String
+
+    Dim i As Integer
+     Dim rfrom As String, rto As String
+     For i = LBound(replacements) + 1 To UBound(replacements) Step 2
+         rfrom = "" & replacements(i - 1)
+         rto = "" & replacements(i)
+         str = Replace(str, rfrom, rto, , , compare)
+     Next
+
+    ReplaceMulti = str
 
 End Function
 
