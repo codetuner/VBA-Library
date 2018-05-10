@@ -86,12 +86,15 @@ Public Function ImportToTable(ByVal targetTableName As String, ByVal oledbConnec
             Case ADODB.DataTypeEnum.adVarChar:
                 newfld.Type = DataTypeEnum.dbText
                 newfld.Size = adofld.DefinedSize
+                newfld.AllowZeroLength = True
             Case ADODB.DataTypeEnum.adVarWChar:
                 newfld.Type = DataTypeEnum.dbText
                 newfld.Size = adofld.DefinedSize
+                newfld.AllowZeroLength = True
             Case ADODB.DataTypeEnum.adWChar:
                 newfld.Type = DataTypeEnum.dbText
                 newfld.Size = adofld.DefinedSize
+                newfld.AllowZeroLength = True
             Case ADODB.DataTypeEnum.adLongVarChar:
                 newfld.Type = DataTypeEnum.dbMemo
                 'newfld.Size = adofld.DefinedSize
@@ -101,11 +104,13 @@ Public Function ImportToTable(ByVal targetTableName As String, ByVal oledbConnec
             Case ADODB.DataTypeEnum.adBSTR:
                 newfld.Type = DataTypeEnum.dbText
                 newfld.Size = adofld.DefinedSize
+                newfld.AllowZeroLength = True
             Case ADODB.DataTypeEnum.adChar:
                 newfld.Type = DataTypeEnum.dbText
                 newfld.Size = adofld.DefinedSize
+                newfld.AllowZeroLength = True
             Case Else:
-                Err.Raise 5, "AdodbImport", "Type of field '" & adofld.Name & "' not supported."
+                Err.Raise 5, "AdodbImport", "Type of field '" & adofld.name & "' not supported."
         End Select
         newtd.Fields.Append newfld
     Next
