@@ -70,7 +70,9 @@ Public Function ImportToTable(ByVal targetTableName As String, ByVal oledbConnec
             Case ADODB.DataTypeEnum.adDBTimeStamp:
                 newfld.Type = DataTypeEnum.dbDate
             Case ADODB.DataTypeEnum.adDecimal:
-                newfld.Type = DataTypeEnum.dbDecimal
+                newfld.Type = DataTypeEnum.dbCurrency
+            Case ADODB.DataTypeEnum.adNumeric:
+                newfld.Type = DataTypeEnum.dbCurrency
             Case ADODB.DataTypeEnum.adDouble:
                 newfld.Type = DataTypeEnum.dbDouble
             Case ADODB.DataTypeEnum.adGUID:
