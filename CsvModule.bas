@@ -59,7 +59,9 @@ Public Sub ImportCsv(ByVal tableName As String, ByVal fileName As String)
         Set data = ReadCsvLineFromFile(1, separator)
         t.AddNew
         For Each v In mappedColumnIndexes
-            If data(v) <> "" Then mappedColumns(v).Value = data(v)
+            If v <= data.Count Then
+                If data(v) <> "" Then mappedColumns(v).Value = data(v)
+            End If
         Next
         t.Update
     Loop
