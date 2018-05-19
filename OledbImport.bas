@@ -45,7 +45,7 @@ Public Function ImportToTable(ByVal targetTableName As String, ByVal oledbConnec
     
     ' Create table with initial #LocalID field:
     Dim newtd As TableDef
-    Dim newfld As Field
+    Dim newfld As field
     Set newtd = CurrentDb.CreateTableDef(targetTableName)
     Set newfld = newtd.CreateField("#LocalID", DataTypeEnum.dbLong)
     newfld.Attributes = dbAutoIncrField
@@ -75,8 +75,9 @@ Public Function ImportToTable(ByVal targetTableName As String, ByVal oledbConnec
                 newfld.Type = DataTypeEnum.dbCurrency
             Case ADODB.DataTypeEnum.adDouble:
                 newfld.Type = DataTypeEnum.dbDouble
-            Case ADODB.DataTypeEnum.adGUID:
-                newfld.Type = DataTypeEnum.dbGUID
+            'Case ADODB.DataTypeEnum.adGUID:
+            '    newfld.Type = DataTypeEnum.dbText
+            '    newfld.Size = 64
             Case ADODB.DataTypeEnum.adInteger:
                 newfld.Type = DataTypeEnum.dbLong
             Case ADODB.DataTypeEnum.adSingle:
@@ -90,29 +91,47 @@ Public Function ImportToTable(ByVal targetTableName As String, ByVal oledbConnec
                 newfld.Size = adofld.DefinedSize
                 newfld.AllowZeroLength = True
             Case ADODB.DataTypeEnum.adVarWChar:
-                newfld.Type = DataTypeEnum.dbText
-                newfld.Size = adofld.DefinedSize
-                newfld.AllowZeroLength = True
+                If adofld.DefinedSize <= 256 Then
+                    newfld.Type = DataTypeEnum.dbText
+                    newfld.Size = adofld.DefinedSize
+                    newfld.AllowZeroLength = True
+                Else
+                    newfld.Type = DataTypeEnum.dbMemo
+                End If
             Case ADODB.DataTypeEnum.adWChar:
-                newfld.Type = DataTypeEnum.dbText
-                newfld.Size = adofld.DefinedSize
-                newfld.AllowZeroLength = True
+                If adofld.DefinedSize <= 256 Then
+                    newfld.Type = DataTypeEnum.dbText
+                    newfld.Size = adofld.DefinedSize
+                    newfld.AllowZeroLength = True
+                Else
+                    newfld.Type = DataTypeEnum.dbMemo
+                End If
             Case ADODB.DataTypeEnum.adLongVarChar:
                 newfld.Type = DataTypeEnum.dbMemo
-                'newfld.Size = adofld.DefinedSize
             Case ADODB.DataTypeEnum.adLongVarWChar:
                 newfld.Type = DataTypeEnum.dbMemo
-                'newfld.Size = adofld.DefinedSize
             Case ADODB.DataTypeEnum.adBSTR:
-                newfld.Type = DataTypeEnum.dbText
-                newfld.Size = adofld.DefinedSize
-                newfld.AllowZeroLength = True
+                If adofld.DefinedSize <= 256 Then
+                    newfld.Type = DataTypeEnum.dbText
+                    newfld.Size = adofld.DefinedSize
+                    newfld.AllowZeroLength = True
+                Else
+                    newfld.Type = DataTypeEnum.dbMemo
+                End If
             Case ADODB.DataTypeEnum.adChar:
+                If adofld.DefinedSize <= 256 Then
+                    newfld.Type = DataTypeEnum.dbText
+                    newfld.Size = adofld.DefinedSize
+                    newfld.AllowZeroLength = True
+                Else
+                    newfld.Type = DataTypeEnum.dbMemo
+                End If
+            Case ADODB.DataTypeEnum.adGUID:
                 newfld.Type = DataTypeEnum.dbText
-                newfld.Size = adofld.DefinedSize
-                newfld.AllowZeroLength = True
+                newfld.Size = 38
+                newfld.AllowZeroLength = False
             Case Else:
-                Err.Raise 5, "AdodbImport", "Type of field '" & adofld.name & "' not supported."
+                Err.Raise 5, "AdodbImport", "Type of field '" & adofld.Name & "' not supported."
         End Select
         newtd.Fields.Append newfld
     Next
@@ -185,7 +204,7 @@ Public Function AppendToTable(ByVal targetTableName As String, ByVal oledbConnec
 
     ' Build a fieldmap so fields which are missing in the target table can easily be skipped without error:
     Dim fieldmap As New Collection
-    Dim fld As Field
+    Dim fld As field
     For Each fld In tdrs.Fields
         fieldmap.Add True, fld.Name
     Next
@@ -203,7 +222,14 @@ Public Function AppendToTable(ByVal targetTableName As String, ByVal oledbConnec
         tdrs.AddNew
         For Each adofld In adors.Fields
             If fieldmap(adofld.Name) Then
+                ' Copy field value:
                 tdrs(adofld.Name).Value = adofld.Value
+                '' Fix if string field is empty string, make it null:
+                'If adofld.Type = 129 Or adofld.Type = 201 Or adofld.Type = 203 Or adofld.Type = 200 Or adofld.Type = 202 Or adofld.Type = 130 Then
+                '    If adofld.value = "" Then
+                '        adofld.value = Null
+                '    End If
+                'End If
             End If
         Next
         tdrs.Update
@@ -225,5 +251,3 @@ Public Function AppendToTable(ByVal targetTableName As String, ByVal oledbConnec
     AppendToTable = rowcount
 
 End Function
-
-
